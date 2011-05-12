@@ -215,7 +215,7 @@ with JS11.Compiler.prototype as compiler {
 				prefix += args[i].replace(/[\s\S]*as ([a-zA-Z$_][\w$]*)$/, "$1") + ","
 				argString += args[i].replace(/([\s\S]*[^\s]+)\s*as [a-zA-Z$_][\w$]*$/, "$1") + ","
 			}
-			block = "(function (" + prefix.substring(0, prefix.length - 1) + "){" + block + "})(" + argString.substring(0, argString.length - 1) + ")"
+			block = "(function (" + prefix.substring(0, prefix.length - 1) + "){" + block + "}).call(this," + argString.substring(0, argString.length - 1) + ")"
 			text = text.substring(0, text.indexOf("with")) + block + text.substring(endIndex + 1, text.length)
 		}
 		return text
@@ -341,7 +341,7 @@ with JS11.Compiler.prototype as compiler {
 		}
 	}
 	compiler.preserveEmptyObjectLiterals {
-		this.text = this.text.replace(/([\[\=\|\:\&\!\(,\}\(]\s*)\{\}/g, "$1OBJECTLITERALSTART()")
+		this.text = this.text.replace(/([\[\=\|\:\&\!\(,\}\(]|return\s*)\{\}/g, "$1OBJECTLITERALSTART()")
 	}
 	compiler.wrapLoopsAndConditionals {
 		*search = /[^\w\$](if|for|while|catch|switch|with)[^\w\$]/g,
@@ -953,23 +953,13 @@ with JS11.Compiler.prototype as compiler {
 					// Id
 					if prefix.flags[1] isn't -1 {
 						if prefix.dotted {
-							if prefix.raw.charAt(0) is "]" {
-								// It's array access so don't include a function name
-								prefixStr = prefix.raw.substring(0, prefix.raw.indexOf("(")) + "=function (" + prefix.args + ")"
-							} else {
-								prefixStr = prefix.raw.substring(0, prefix.raw.indexOf("(")) + "=function " + prefix.raw.substring(0, prefix.raw.indexOf("(")) + "(" + prefix.args + ")"
-							}
+							prefixStr = prefix.raw.substring(0, prefix.raw.indexOf("(")) + "=function (" + prefix.args + ")"
 						} else {
 							prefixStr += prefix.raw.substring(0, prefix.raw.indexOf("(")) + "(" + prefix.args + ")"
 						}
 					} else {
 						if prefix.dotted {
-							if prefix.raw.charAt(0) is "]" {
-								// It's array access so don't include a function name
-								prefixStr = prefix.raw + "=function ()"
-							} else {
-								prefixStr = prefix.raw + "=function " + prefix.raw + "()"
-							}
+							prefixStr = prefix.raw + "=function ()"
 						} else {
 							prefixStr += prefix.raw + "()"
 						}
@@ -993,7 +983,7 @@ with JS11.Compiler.prototype as compiler {
 					opener = "{"
 					closer = "}"
 				} else if depth is 0 and this.text.charAt(j) is "}" {
-					this.text = this.text.substr(0, j + 1) + ")()" + this.text.substring(j + 1, this.text.length)
+					this.text = this.text.substr(0, j + 1) + ").call(this)" + this.text.substring(j + 1, this.text.length)
 					break
 				}
 			}

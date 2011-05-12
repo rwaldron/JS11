@@ -1,8 +1,9 @@
+// Check to see if we're running as a Web Worker or in a browser window / global context
 if(typeof window==="undefined"&&typeof global==="undefined"){
 // Running as Worker
 // Create a console shim (relies on host providing support via onmessage)
 var console=new Object
-console.log=function log(message){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){message="message"in arguments[0]?arguments[0].message:""}else{if(typeof message==="undefined"){message=""}}
+console.log=function (message){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){message="message"in arguments[0]?arguments[0].message:""}else{if(typeof message==="undefined"){message=""}}
 postMessage({type:"console",message:message})
 }
 }
@@ -20,7 +21,7 @@ exports.Compiler=JS11.Compiler
 (function (compiler){
 
 // Main compilation function
-compiler.toJS=function toJS(text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:""}else{if(typeof text==="undefined"){text=""}}
+compiler.toJS=function (text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:""}else{if(typeof text==="undefined"){text=""}}
 
 // Detect option strings
 this.blockscan=text.indexOf("\"use "+"caution\"")>-1?true:false
@@ -55,7 +56,7 @@ return text
 // Set up text for conversion and placeholder arrays
 compiler.text=""
 compiler.placeholders=new Object
-compiler.resetPlaceholderArrays=function resetPlaceholderArrays(){
+compiler.resetPlaceholderArrays=function (){
 this.placeholders.blockcomments=new Array
 this.placeholders.linecomments=new Array
 this.placeholders.strings=new Array
@@ -65,7 +66,7 @@ this.placeholders.regex=new Array
 //
 // Pass-through text processing functions
 //
-compiler.enumerateRegex=function enumerateRegex(text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:""}else{if(typeof text==="undefined"){text=""}}
+compiler.enumerateRegex=function (text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:""}else{if(typeof text==="undefined"){text=""}}
 var prefix="",
 suffix=""
 if(text.charAt(0)!=="/"){
@@ -79,7 +80,7 @@ text=text.substring(0,text.length-1)
 this.placeholders.regex.push(text)
 return prefix+"@PLACEHOLDERREGEX"+(this.placeholders.regex.length-1)+"END"+suffix
 }
-compiler.enumerateString=function enumerateString(text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:""}else{if(typeof text==="undefined"){text=""}}
+compiler.enumerateString=function (text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:""}else{if(typeof text==="undefined"){text=""}}
 // If indenting on first line is nil but +1 on all other lines,
 // then reduce the other lines by the lower common amount
 if(text.match(/\n/)!==null){
@@ -111,7 +112,7 @@ text=lines.join("\n")
 this.placeholders.strings.push(text)
 return "@PLACEHOLDERSTRINGS"+(this.placeholders.strings.length-1)+"END"
 }
-compiler.enumerateBlockComment=function enumerateBlockComment(text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:""}else{if(typeof text==="undefined"){text=""}}
+compiler.enumerateBlockComment=function (text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:""}else{if(typeof text==="undefined"){text=""}}
 var prefix=""
 if(text.charAt(0)!=="/"){
 prefix=text.charAt(0)
@@ -120,7 +121,7 @@ text=text.substring(1,text.length)
 this.placeholders.blockcomments.push(text)
 return prefix+"@PLACEHOLDERBLOCKCOMMENTS"+(this.placeholders.blockcomments.length-1)+"END"
 }
-compiler.enumerateLineComment=function enumerateLineComment(text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:""}else{if(typeof text==="undefined"){text=""}}
+compiler.enumerateLineComment=function (text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:""}else{if(typeof text==="undefined"){text=""}}
 var prefix="",suffix=""
 if(text.charAt(0)!=="/"){
 prefix=text.charAt(0)
@@ -133,19 +134,19 @@ text=text.substring(0,text.length-1)
 this.placeholders.linecomments.push(text)
 return prefix+"@PLACEHOLDERLINECOMMENTS"+(this.placeholders.linecomments.length-1)+"END"+suffix
 }
-compiler.getPlaceholder=function getPlaceholder(text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:""}else{if(typeof text==="undefined"){text=""}}
+compiler.getPlaceholder=function (text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:""}else{if(typeof text==="undefined"){text=""}}
 var type=text.replace(/@PLACEHOLDER([^\d]+)\d+END/,"$1").toLowerCase(),
 index=Number(text.replace(/@PLACEHOLDER[^\d]+(\d+)END/,"$1"))
 return this.placeholders[type][index]
 }
-compiler.preserveKeywordSpacing=function preserveKeywordSpacing(text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:""}else{if(typeof text==="undefined"){text=""}}
+compiler.preserveKeywordSpacing=function (text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:""}else{if(typeof text==="undefined"){text=""}}
 if(text.charAt(1).match(/^\w/)===null){
 return text.replace(/^ *([\(\)\{\}\=\:,\|\&\*\+\/\-\!\[\]\?<>\;]) */,"$1")
 }else{
 return text.replace(/([\s\S])(\w+) *([\(\)\{\}\=\:,\|\&\*\+\/\-\!\[\]\?<>\;]) */,"$1$2 $3")
 }
 }
-compiler.restoreObjectLiteral=function restoreObjectLiteral(text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:""}else{if(typeof text==="undefined"){text=""}}
+compiler.restoreObjectLiteral=function (text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:""}else{if(typeof text==="undefined"){text=""}}
 var depth=0,
 start=text.indexOf("("),
 i
@@ -158,7 +159,7 @@ break
 }
 return "{"+text.substring(start+1,i)+"}"+text.substring(i+1,text.length)
 }
-compiler.withHandler=function withHandler(text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:""}else{if(typeof text==="undefined"){text=""}}
+compiler.withHandler=function (text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:""}else{if(typeof text==="undefined"){text=""}}
 // Search for closing }
 var level=0,
 endIndex=0,
@@ -214,7 +215,7 @@ for(i=0;i<args.length;i++){
 prefix+=args[i].replace(/[\s\S]*as ([a-zA-Z$_][\w$]*)$/,"$1")+","
 argString+=args[i].replace(/([\s\S]*[^\s]+)\s*as [a-zA-Z$_][\w$]*$/,"$1")+","
 }
-block="(function ("+prefix.substring(0,prefix.length-1)+"){"+block+"})("+argString.substring(0,argString.length-1)+")"
+block="(function ("+prefix.substring(0,prefix.length-1)+"){"+block+"}).call(this,"+argString.substring(0,argString.length-1)+")"
 text=text.substring(0,text.indexOf("with"))+block+text.substring(endIndex+1,text.length)
 }
 return text
@@ -223,7 +224,7 @@ return text
 //
 // Functions that operate on compiler.text
 //
-compiler.strikeImmutableElements=function strikeImmutableElements(compiler){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){compiler="compiler"in arguments[0]?arguments[0].compiler:this}else{if(typeof compiler==="undefined"){compiler=this}}
+compiler.strikeImmutableElements=function (compiler){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){compiler="compiler"in arguments[0]?arguments[0].compiler:this}else{if(typeof compiler==="undefined"){compiler=this}}
 // "isn't"
 this.text=this.text.replace(/isn't/g,"@PLACEHOLDER"+"ISNTEND")
 // Double forward slash
@@ -240,7 +241,7 @@ this.text=this.text.replace(/\/\/[^\n]*\n/g,function (text){if(arguments.length=
 // Reinstate isn't
 this.text=this.text.replace(/@PLACEHOLDER{1}ISNTEND/g,"isn't")
 }
-compiler.blockifyIndents=function blockifyIndents(){
+compiler.blockifyIndents=function (){
 // Return early if this option isn't enabled, as it can be destructive on improperly formatted code
 if(!this.blockscan){return}
 
@@ -263,7 +264,7 @@ previousIndent=indent
 }
 this.text=lines.join("\n")
 }
-compiler.normaliseFormatting=function normaliseFormatting(compiler){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){compiler="compiler"in arguments[0]?arguments[0].compiler:this}else{if(typeof compiler==="undefined"){compiler=this}}
+compiler.normaliseFormatting=function (compiler){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){compiler="compiler"in arguments[0]?arguments[0].compiler:this}else{if(typeof compiler==="undefined"){compiler=this}}
 // Force UNIX line endings
 this.text=this.text.replace(/\r\n/g,"\n")
 // Strip excess whitespace
@@ -283,7 +284,7 @@ this.text=this.text.replace(/\,(\s*)((?:@PLACEHOLDER[A-Z]+COMMENTS+\d+END\s*)*)(
 // Rearrange newlines after : or ? to stop anonymous functions inside ternary expressions from auto-executing
 this.text=this.text.replace(/([:\?])((?: *\n* *)*)((?:@PLACEHOLDER[A-Z]+COMMENTS+\d+END\s*)*)((?: *\n* *)*)(\S)/g,"$2$3$4$1$5")
 }
-compiler.convertEnglishOperators=function convertEnglishOperators(){
+compiler.convertEnglishOperators=function (){
 this.text=this.text.replace(/([^\w$.])isn'?t([^:)\w$])/g,"$1is not$2")
 this.text=this.text.replace(/([^\w$.])(?:is\s*)?not\s*like([^:)\w$])/g,"$1!=$2")
 this.text=this.text.replace(/([^\w$.])(?:is\s*)?like([^:)\w$])/g,"$1==$2")
@@ -296,12 +297,12 @@ this.text=this.text.replace(/([^\w$.])not([^:)\w$])/g,"$1!$2")
 this.text=this.text.replace(/([^\w$.])and([^:)\w$])/g,"$1&&$2")
 this.text=this.text.replace(/([^\w$.])or([^:)\w$])/g,"$1||$2")
 }
-compiler.insertVar=function insertVar(){
+compiler.insertVar=function (){
 // Convert vars at line starts and inside parentheses
 this.text=this.text.replace(/^(\s*)(\(?)\* *(\n*) */gm,"$1$2var $2")
 this.text=this.text.replace(/([\({;:])\* *(\n*) */g,"$1var $2")
 }
-compiler.detectNonEmptyObjectLiterals=function detectNonEmptyObjectLiterals(){
+compiler.detectNonEmptyObjectLiterals=function (){
 var depth=0,
 namey=false,
 end=this.text.lastIndexOf("}")+1,
@@ -339,10 +340,10 @@ i--
 }
 }
 }
-compiler.preserveEmptyObjectLiterals=function preserveEmptyObjectLiterals(){
-this.text=this.text.replace(/([\[\=\|\:\&\!\(,\}\(]\s*)\{\}/g,"$1OBJECTLITERALSTART()")
+compiler.preserveEmptyObjectLiterals=function (){
+this.text=this.text.replace(/([\[\=\|\:\&\!\(,\}\(]|return\s*)\{\}/g,"$1OBJECTLITERALSTART()")
 }
-compiler.wrapLoopsAndConditionals=function wrapLoopsAndConditionals(){
+compiler.wrapLoopsAndConditionals=function (){
 var search=/[^\w\$](if|for|while|catch|switch|with)[^\w\$]/g,
 stops=new Array,
 i,j,
@@ -394,7 +395,7 @@ break
 // Whitespace cleanup (in case parameters were wrapped already)
 this.text=this.text.replace(/([^\w\$])(if|for|while|catch|switch|with)\s*/g,"$1$2")
 }
-compiler.shorthandLoops=function shorthandLoops(){
+compiler.shorthandLoops=function (){
 var iterator
 // 10 { becomes for (var _nnn = 0; _nnn < 10; _nnn++) {
 while(this.text.match(/([^\w\d$])(\d+)[ \t]*\{/)!==null){
@@ -409,7 +410,7 @@ this.text=this.text.replace(/([^\w\d$])for\s*\(\s*(\d+)\s*\)[ \t]*\{/,"$1for(var
 this.text=this.text.replace(/([^\w\d$])(\d+)\s*as\s+([a-zA-Z_\$][\w$]*)[ \t]*\{/,"$1for(var $3=0;$3<$2;$3++){")
 this.text=this.text.replace(/([^\w\d$])for\s*\(\s*(\d+)\s*as\s+([a-zA-Z_$][\w$]*)\s*\)[ \t]*\{/,"$1for(var $3=0;$3<$2;$3++){")
 }
-compiler.convertMessagingSyntax=function convertMessagingSyntax(){
+compiler.convertMessagingSyntax=function (){
 // Return early if this option isn't enabled, as it slows down the compiling process
 if(!this.prism){return}
 
@@ -656,7 +657,7 @@ if(block.match(/^\[\s*[\w$\/]+\s*\{[\s\S]*?\}\]$/)!==null){return 4}
 return -1
 }
 }
-compiler.reconstituteFunctions=function reconstituteFunctions(){
+compiler.reconstituteFunctions=function (){
 // Problem: functions that get transferred to argument blocks end up mangled
 // Rather than barring functions from being used in argument default values,
 // figure out a way to make this work.
@@ -952,23 +953,13 @@ prefixStr+="()"
 // Id
 if(prefix.flags[1]!==-1){
 if(prefix.dotted){
-if(prefix.raw.charAt(0)==="]"){
-// It's array access so don't include a function name
 prefixStr=prefix.raw.substring(0,prefix.raw.indexOf("("))+"=function ("+prefix.args+")"
-}else{
-prefixStr=prefix.raw.substring(0,prefix.raw.indexOf("("))+"=function "+prefix.raw.substring(0,prefix.raw.indexOf("("))+"("+prefix.args+")"
-}
 }else{
 prefixStr+=prefix.raw.substring(0,prefix.raw.indexOf("("))+"("+prefix.args+")"
 }
 }else{
 if(prefix.dotted){
-if(prefix.raw.charAt(0)==="]"){
-// It's array access so don't include a function name
 prefixStr=prefix.raw+"=function ()"
-}else{
-prefixStr=prefix.raw+"=function "+prefix.raw+"()"
-}
 }else{
 prefixStr+=prefix.raw+"()"
 }
@@ -992,13 +983,13 @@ if(depth===0&&this.text.charAt(j)===")"){
 opener="{"
 closer="}"
 }else if(depth===0&&this.text.charAt(j)==="}"){
-this.text=this.text.substr(0,j+1)+")()"+this.text.substring(j+1,this.text.length)
+this.text=this.text.substr(0,j+1)+").call(this)"+this.text.substring(j+1,this.text.length)
 break
 }
 }
 }
 }
-compiler.reconstituteObjectLiterals=function reconstituteObjectLiterals(compiler){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){compiler="compiler"in arguments[0]?arguments[0].compiler:this}else{if(typeof compiler==="undefined"){compiler=this}}
+compiler.reconstituteObjectLiterals=function (compiler){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){compiler="compiler"in arguments[0]?arguments[0].compiler:this}else{if(typeof compiler==="undefined"){compiler=this}}
 // Convert tagged object literals back to normal
 var oldtext=""
 while(this.text!==oldtext){
@@ -1006,7 +997,7 @@ oldtext=this.text
 this.text=this.text.replace(/OBJECTLITERALSTART\([\s\S]*\)/,function (text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:undefined}return compiler.restoreObjectLiteral.call(compiler,text)})
 }
 }
-compiler.convertNamedArguments=function convertNamedArguments(){
+compiler.convertNamedArguments=function (){
 // Normalise spacing but don't break newlines
 this.text=this.text.replace(/new[ \t]*Object/,"new Object")
 
@@ -1071,7 +1062,7 @@ i--
 end=i
 }
 }
-compiler.rewriteWith=function rewriteWith(compiler){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){compiler="compiler"in arguments[0]?arguments[0].compiler:this}else{if(typeof compiler==="undefined"){compiler=this}}
+compiler.rewriteWith=function (compiler){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){compiler="compiler"in arguments[0]?arguments[0].compiler:this}else{if(typeof compiler==="undefined"){compiler=this}}
 // Hijack with...as statements
 this.text=this.text.replace(/^with[^\w\$][\s\S]*}/,function (text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:undefined}return compiler.withHandler.call(compiler,text)})
 var oldText
@@ -1080,11 +1071,11 @@ oldText=this.text
 this.text=this.text.replace(/[^\w\$]with[^\w\$][\s\S]*}/g,function (text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:undefined}return compiler.withHandler.call(compiler,text)})
 }
 }
-compiler.separateAdjacentTerminators=function separateAdjacentTerminators(){
+compiler.separateAdjacentTerminators=function (){
 // Insert semicolon between terminators separated by newlines and/or comments
 this.text=this.text.replace(/([\)}\w\$])(\s*?\n((?:@PLACEHOLDER[A-Z]+COMMENTS+\d+END\s*)*)\s*?\()/g,"$1;$2")
 }
-compiler.restoreImmutables=function restoreImmutables(compiler){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){compiler="compiler"in arguments[0]?arguments[0].compiler:this}else{if(typeof compiler==="undefined"){compiler=this}}
+compiler.restoreImmutables=function (compiler){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){compiler="compiler"in arguments[0]?arguments[0].compiler:this}else{if(typeof compiler==="undefined"){compiler=this}}
 this.text=this.text.replace(/@PLACEHOLDERBLOCKCOMMENTS\d+END/g,function (text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:undefined}return compiler.getPlaceholder.call(compiler,text)})
 this.text=this.text.replace(/@PLACEHOLDERLINECOMMENTS\d+END/g,function (text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:undefined}return compiler.getPlaceholder.call(compiler,text)})
 // Repeat in case a line comment contains a block comment...
@@ -1093,7 +1084,7 @@ this.text=this.text.replace(/@PLACEHOLDERSTRINGS\d+END/g,function (text){if(argu
 this.text=this.text.replace(/@PLACEHOLDERREGEX\d+END/g,function (text){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){text="text"in arguments[0]?arguments[0].text:undefined}return compiler.getPlaceholder.call(compiler,text)})
 this.text=this.text.replace(/@PLACEHOLDER{1}ISNTEND/g,"isn't")
 }
-compiler.finalise=function finalise(){
+compiler.finalise=function (){
 // Insert semicolon between terminators separated by one or more newlines
 this.text=this.text.replace(/([\)}])(\s*?\n\s*?\()/g,"$1;$2")
 
@@ -1183,12 +1174,12 @@ text=text.replace(/^(\n)/gm,"\\n\\$1")
 return text
 }
 }
-})(JS11.Compiler.prototype)
+}).call(this,JS11.Compiler.prototype)
 
 if(typeof window==="undefined"&&typeof global==="undefined"){
 // Running as worker
 var compiler=new JS11.Compiler
-this.onmessage=function onmessage(event){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){event="event"in arguments[0]?arguments[0].event:{data:""}}else{if(typeof event==="undefined"){event={data:""}}}
+this.onmessage=function (event){if(arguments.length===1&&typeof arguments[0]==="object"&&arguments[0]._===null){event="event"in arguments[0]?arguments[0].event:{data:""}}else{if(typeof event==="undefined"){event={data:""}}}
 postMessage({type:"JS11",src:compiler.toJS(event.data)})
 }
 }
